@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -302,4 +303,96 @@ class AuthService {
       return false;
     }
   }
+
+
+  final String clientId = "BUMHOIcamdicheujaihUbP4P2bqZLPK1U9Qjpr3w";
+
+  /// Convert Google Token to Backend Token
+  Future<Map<String, String>?> convertGoogleToken(String googleToken) async {
+    final url = Uri.parse('https://bilalsas.pythonanywhere.com/auth/convert-token/');
+    try {
+      print('Starting Google token conversion...');
+      print('Google Token: $googleToken');
+      print('Full URL: $url');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "grant_type": "convert-token",
+          "backend": "google-oauth2",
+          "client_id": "BUMHOIcamdicheujaihUbP4P2bqZLPK1U9Qjpr3w",
+          "token": googleToken,
+        }),
+      );
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final accessToken = responseData['access_token'] as String;
+        final refreshToken = responseData['refresh_token'] as String;
+
+        // Save tokens locally
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('access_token', accessToken);
+        await prefs.setString('refresh_token', refreshToken);
+
+        return {
+          'access_token': accessToken,
+          'refresh_token': refreshToken,
+        };
+      } else {
+        print('Failed to convert Google token: ${response.body}');
+        return null;
+      }
+    } catch (error) {
+      print('Error during Google token conversion: $error');
+
+      return null;
+
+    }
+  }
+
+
+  /// Refresh Backend Token
+  Future<String?> refreshGoogleAccessToken(String refreshToken) async {
+    final url = Uri.parse('https://bilalsas.pythonanywhere.com/auth/token/');
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "grant_type": "refresh-token",
+          "backend": "google-oauth2",
+          "client_id": clientId,
+          "token": refreshToken,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final newAccessToken = responseData['access_token'] as String;
+
+        // Save the new access token locally
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('access_token', newAccessToken);
+
+        return newAccessToken;
+      } else {
+        print('Failed to refresh token: ${response.body}');
+        return null;
+      }
+    } catch (error) {
+      print('Error refreshing token: $error');
+      return null;
+    }
+  }
+
+
+
+
 }

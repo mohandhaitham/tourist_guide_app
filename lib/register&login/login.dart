@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ourist_guide_app/register&login/passwordreset.dart';
 import 'package:ourist_guide_app/register&login/signup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../api_services/auth_service.dart';
 import 'auth.dart';
 
 import 'package:http/http.dart' as http;
@@ -25,6 +27,40 @@ class _LoginPageState extends State<LoginPage> {
   final Color secondaryColor = Color(0xFF7C7878); // Light
   final Color buttonColor = Color(0xffD7D9DC); // Dark
   final Color textColor = Colors.black;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  Future<void> handleGoogleSignIn() async {
+    try {
+      // Step 1: Trigger the Google Sign-In flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        print('Google Sign-In canceled by user.');
+        return;
+      }
+
+      // Step 2: Get the Google authentication tokens
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final googleToken = googleAuth.accessToken;
+
+      if (googleToken != null) {
+        // Step 3: Convert Google Token to Backend Tokens
+        final tokens = await AuthService().convertGoogleToken(googleToken);
+        if (tokens != null) {
+          print('Access Token: ${tokens['access_token']}');
+          print('Refresh Token: ${tokens['refresh_token']}');
+
+          // Navigate to the main app or dashboard
+          Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          print('Failed to exchange Google token.');
+        }
+      } else {
+        print('Failed to retrieve Google access token.');
+      }
+    } catch (error) {
+      print('Error during Google Sign-In: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/cover.png'),
+                    image: AssetImage('assets/images/bg1.jpg'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -70,11 +106,11 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       // Logo
                       Image.asset(
-                        'assets/images/logo.png', // Path to your logo
+                        'assets/images/tur.png', // Path to your logo
                         width: size.width *
-                            0.5, // Adjust the size based on your needs
+                            0.4, // Adjust the size based on your needs
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 10),
 
                       // Email/Phone TextField with custom colors
                       Directionality(
@@ -143,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
 
-                      SizedBox(height: 40),
+                      SizedBox(height: 20),
 
                       // Login Button with custom color
                       MaterialButton(
@@ -225,10 +261,11 @@ class _LoginPageState extends State<LoginPage> {
                               );
                             }
                           },
+
                         child: Ink(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [Color(0xFF7C7878), Color(0xFF7C7878)],
+                              colors: [Color(0xFF0083BB), Colors.blue],
                               begin: Alignment.centerLeft,
                               end: Alignment.centerRight,
                             ),
@@ -240,16 +277,20 @@ class _LoginPageState extends State<LoginPage> {
                             child: Text(
                               "تسجيل الدخول",
                               style: TextStyle(
-                                color: textColor,
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 30,
+                                fontSize: 25,
                               ),
                             ),
                           ),
                         ),
                       ),
+                      ElevatedButton(
+                        onPressed: handleGoogleSignIn,
+                        child: Text('سجل بستخدام كوكل',style: TextStyle(fontSize: 20,color: Colors.blue),),
+                      ),
 
-                      SizedBox(height: 30),
+                      SizedBox(height: 10),
 
                       // Create Account link
                       Center(
@@ -264,7 +305,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             "إنشاء حساب",
                             style: TextStyle(
-                              color: Colors.black,
+                              color: Colors.blue,
                               fontSize: 30,
                               fontWeight: FontWeight.bold,
                               decoration: TextDecoration.underline,
@@ -276,16 +317,24 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              // Positioned(
-              //   bottom: 0, // Position the footer at the bottom
-              //   left: 0,
-              //   right: 0,
-              //   child: FooterWidget(), // Use the FooterWidget here
-              // ),
+
             ],
           ),
         ),
       ),
+      bottomNavigationBar: Container(
+        color: Colors.blue[100],
+        padding: EdgeInsets.all(8),
+        child: Text(
+          'Developed by Simple Applicable Solution (SAS) هيئة السياحة 2024 © Copyright',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.black,
+          ),
+        ),
+      ),
+
     );
   }
 

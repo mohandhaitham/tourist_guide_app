@@ -71,12 +71,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
       resizeToAvoidBottomInset: false,
 
       appBar: AppBar(
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
           " تسجيل مستخدم جديد",
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -91,7 +91,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/cover.png'),
+                  image: AssetImage('assets/images/bg1.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -100,173 +100,179 @@ class _RegistrationPageState extends State<RegistrationPage> {
             SingleChildScrollView(
               child: Container(
                 width: size.width,
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: size.height * 0.1),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: size.height * 0.1),
                 child: Form(
                   key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Center(
-                      //   child: Text(
-                      //     "إنشاء حساب",
-                      //     style: TextStyle(
-                      //       fontSize: 20,
-                      //       fontWeight: FontWeight.bold,
-                      //       color: Colors.black,
-                      //     ),
-                      //   ),
-                      // ), SizedBox(height: 10),
-                      _buildTextField(
-                        labelText: "الاسم ",
-                        onChanged: (value) => _firstName = value,
-                        validator: _validateUsername,
-                      ),
-
-                      SizedBox(height: 10),
-                      _buildTextField(
-                        labelText: " اسم اللاب",
-                        onChanged: (value) => _lastName = value,
-                        validator: _validateUsername,
-                      ),
-                      SizedBox(height: 10),
-                      _buildTextField(
-                        labelText: "رقم الهاتف",
-                        onChanged: (value) => _phoneNumber = value,
-                        validator: _validatePhoneNumber,
-                      ),
-                      SizedBox(height: 10),
-                      _buildTextField(
-                        labelText: "البريد الإلكتروني",
-                        onChanged: (value) => _email = value,
-                        validator: _validateEmail,
-                      ),
-                      SizedBox(height: 10),
-                      _buildTextField(
-                        labelText: "رقم الهوية الوطنية",
-                        onChanged: (value) => _nationalIdNumber = value,
-                        validator: _validateNationalId,
-                      ),
-                      SizedBox(height: 10),
-                      _buildTextField(
-                        labelText: "كلمة المرور",
-                        obscureText: true,
-                        onChanged: (value) => _password = value,
-                        validator: _validatePassword,
-                      ),
-                      SizedBox(height: 5),
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: _termsAccepted,
-                            onChanged: (value) {
-                              setState(() {
-                                _termsAccepted = value ?? false;
-                              });
-                            },
-                            checkColor: Colors.white,
-                            activeColor: Color(0xFF375DAD),
+                  child: Card(
+                    color: Color(0xFFE7E7FF),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Center(
+                        //   child: Text(
+                        //     "إنشاء حساب",
+                        //     style: TextStyle(
+                        //       fontSize: 20,
+                        //       fontWeight: FontWeight.bold,
+                        //       color: Colors.black,
+                        //     ),
+                        //   ),
+                        // ), SizedBox(height: 10),
+                        SizedBox(height: 20),
+                        _buildTextField(
+                          labelText: "الاسم ",
+                          onChanged: (value) => _firstName = value,
+                          validator: _validateUsername,
+                        ),
+                    
+                        SizedBox(height: 15),
+                        _buildTextField(
+                          labelText: " اسم اللاب",
+                          onChanged: (value) => _lastName = value,
+                          validator: _validateUsername,
+                        ),
+                        SizedBox(height: 15),
+                        _buildTextField(
+                          labelText: "رقم الهاتف",
+                          onChanged: (value) => _phoneNumber = value,
+                          validator: _validatePhoneNumber,
+                        ),
+                        SizedBox(height: 15),
+                        _buildTextField(
+                          labelText: "البريد الإلكتروني",
+                          onChanged: (value) => _email = value,
+                          validator: _validateEmail,
+                        ),
+                        SizedBox(height: 15),
+                        _buildTextField(
+                          labelText: "رقم الهوية الوطنية",
+                          onChanged: (value) => _nationalIdNumber = value,
+                          validator: _validateNationalId,
+                        ),
+                        SizedBox(height: 15),
+                        _buildTextField(
+                          labelText: "كلمة المرور",
+                          obscureText: true,
+                          onChanged: (value) => _password = value,
+                          validator: _validatePassword,
+                        ),
+                        SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _termsAccepted,
+                              onChanged: (value) {
+                                setState(() {
+                                  _termsAccepted = value ?? false;
+                                });
+                              },
+                              checkColor: Colors.white,
+                              activeColor: Color(0xFF375DAD),
+                            ),
+                            GestureDetector(
+                              onTap: () {},
+                              child: Text(
+                                "أوافق على الشروط والأحكام",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                    
+                        SizedBox(height: 15),
+                        MaterialButton(
+                          elevation: 0,
+                          padding: EdgeInsets.all(10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                          GestureDetector(
-                            onTap: () {},
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate() && _termsAccepted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('جارٍ التسجيل...')),
+                              );
+                              try {
+                                var response = await AuthService().signUp(
+                                  firstName: _firstName,
+                                  lastName: _lastName,
+                                  email: _email,
+                                  password: _password,
+                                  phoneNumber: _phoneNumber,
+                                  nationalIdNumber: _nationalIdNumber,
+                                  context: context,
+                                );
+                                if (response != null) {
+                                  print('تم التسجيل بنجاح: ${response['message']}');
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => OtpVerificationPage(email: _email),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('فشل التسجيل. يرجى المحاولة مرة أخرى.')),
+                                  );
+                                }
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('حدث خطأ: ${e.toString()}')),
+                                );
+                              }
+                            } else if (!_termsAccepted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('يرجى الموافقة على الشروط')),
+                              );
+                            }
+                          },
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xFF0083BB), Colors.blue],
+                    
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Container(
+                              alignment: Alignment.center,
+                              width: double.infinity,
+                              child: Text(
+                                "تسجيل",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    
+                        Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => LoginPage()),
+                              );
+                            },
                             child: Text(
-                              "أوافق على الشروط والأحكام",
+                              "هل لديك حساب؟ تسجيل الدخول",
                               style: TextStyle(
                                 color: Colors.black,
                                 decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 5),
-                      MaterialButton(
-                        elevation: 0,
-                        padding: EdgeInsets.all(10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate() && _termsAccepted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('جارٍ التسجيل...')),
-                            );
-                            try {
-                              var response = await AuthService().signUp(
-                                firstName: _firstName,
-                                lastName: _lastName,
-                                email: _email,
-                                password: _password,
-                                phoneNumber: _phoneNumber,
-                                nationalIdNumber: _nationalIdNumber,
-                                context: context,
-                              );
-                              if (response != null) {
-                                print('تم التسجيل بنجاح: ${response['message']}');
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => OtpVerificationPage(email: _email),
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('فشل التسجيل. يرجى المحاولة مرة أخرى.')),
-                                );
-                              }
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('حدث خطأ: ${e.toString()}')),
-                              );
-                            }
-                          } else if (!_termsAccepted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('يرجى الموافقة على الشروط')),
-                            );
-                          }
-                        },
-                        child: Ink(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFF7C7878), Color(0xFF7C7878)],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: double.infinity,
-                            child: Text(
-                              "تسجيل",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 30,
+                                fontSize: 16,
                               ),
                             ),
                           ),
                         ),
-                      ),
-
-                      Center(
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => LoginPage()),
-                            );
-                          },
-                          child: Text(
-                            "هل لديك حساب؟ تسجيل الدخول",
-                            style: TextStyle(
-                              color: Colors.black,
-                              decoration: TextDecoration.underline,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
